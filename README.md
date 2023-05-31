@@ -9,4 +9,4 @@ To run this code locally:
 
 `go build Expense-Tracker.go`
 
-`go run Expense-Tracker.go'
+`go run Expense-Tracker.go`
