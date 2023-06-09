@@ -8,8 +8,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/wcharczuk/go-chart"
 )
 
 type Expense struct {
@@ -39,11 +37,10 @@ func main() {
 		fmt.Println("2. View expenses")
 		fmt.Println("3. Filter expenses by category")
 		fmt.Println("4. View remaining budget")
-		fmt.Println("5. Generate expense chart")
-		fmt.Println("6. Generate financial report")
-		fmt.Println("7. Export expenses to CSV")
-		fmt.Println("8. Import expenses from CSV")
-		fmt.Println("9. Exit")
+		fmt.Println("5. Generate financial report")
+		fmt.Println("6. Export expenses to CSV")
+		fmt.Println("7. Import expenses from CSV")
+		fmt.Println("8. Exit")
 
 		fmt.Print("\nEnter your choice: ")
 		choice, _ := reader.ReadString('\n')
@@ -59,14 +56,12 @@ func main() {
 		case "4":
 			viewRemainingBudget(budget)
 		case "5":
-			generateExpenseChart(budget)
-		case "6":
 			generateFinancialReport(budget)
-		case "7":
+		case "6":
 			exportExpensesToCSV(budget)
-		case "8":
+		case "7":
 			importExpensesFromCSV(reader, &budget)
-		case "9":
+		case "8":
 			fmt.Println("Exiting...")
 			os.Exit(0)
 		default:
@@ -147,39 +142,6 @@ func viewRemainingBudget(budget Budget) {
 
 	remainingBudget := budget.Limit - totalExpenses
 	fmt.Printf("\nRemaining Budget: $%.2f\n", remainingBudget)
-}
-
-func generateExpenseChart(budget Budget) {
-	if len(budget.Expenses) == 0 {
-		fmt.Println("No expenses found.")
-		return
-	}
-
-	var categories []string
-	var prices []float64
-
-	categoryExpenses := make(map[string]float64)
-
-	for _, expense := range budget.Expenses {
-		categoryExpenses[expense.Category] += expense.Price
-	}
-
-	for category, price := range categoryExpenses {
-		categories = append(categories, category)
-		prices = append(prices, price)
-	}
-
-	pie := chart.PieChart{
-		Width:  800,
-		Height: 600,
-		Values: prices,
-		Labels: categories,
-	}
-
-	f, _ := os.Create("expense_chart.png")
-	defer f.Close()
-	pie.Render(chart.PNG, f)
-	fmt.Println("Expense chart generated successfully!")
 }
 
 func generateFinancialReport(budget Budget) {
@@ -278,14 +240,16 @@ func importExpensesFromCSV(reader *bufio.Reader, budget *Budget) {
 	fmt.Println("Expenses imported from CSV successfully!")
 }
 
-func parseFloat(s string) float64 {
-	f, err := strconv.ParseFloat(s, 64)
+func parseFloat(value string) float64 {
+	value = strings.ReplaceAll(value, ",", "")
+	parsedValue, err := strconv.ParseFloat(value, 64)
 	if err != nil {
+		fmt.Println("Error parsing float value:", err)
 		return 0.0
 	}
-	return f
+	return parsedValue
 }
 
-func trimNewLine(s string) string {
-	return strings.TrimSuffix(s, "\n")
+func trimNewLine(str string) string {
+	return strings.TrimSuffix(str, "\n")
 }
